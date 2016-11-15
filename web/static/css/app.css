@@ -1,1 +1,3 @@
-/* This file is for your main application css. */
+.player-square, .viewer-square {
+  border: 1px solid #e1e1e1;
+}/* This file is for your main application css. */

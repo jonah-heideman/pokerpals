@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="row">
+    <div class="col s6 player-square">pos 1</div>
+    <div class="col s6 player-square">pos 2</div>
+  </div>
+  <div class="row">
+    <div class="col s6 player-square">pos 3</div>
+    <div class="col s6 player-square">pos 4</div>
+  </div>
+  <div class="row">
+    <div class="col s12 viewer-square">you</div>
+  </div>
+</div>
+<div id="game-id" style="display:none"><%= @game.id %></div>
+<button id="join-button">JOIN</button>
+<button id="start-button">START</button>
+
+<%= link "Exit", id: "exit-link", to: game_path(@conn, :index) %>
+
+<script type="text/javascript">
+  window.localStorage.user_id = <%= @conn.assigns.current_user.id %>
+  window.localStorage.game_id = <%= @game.id %>
+  window.localStorage.username = "<%= @conn.assigns.current_user.username %>"
+</script>

@@ -20,6 +20,7 @@ defmodule Pokerpals.Router do
     get "/", PageController, :index
     resources "/users", UserController, only: [:new, :create]
     resources "/sessions", SessionController, only: [:new, :create, :delete]
+    resources "/games", GameController, only: [:index, :show, :create, :delete]
   end
 
   # Other scopes may use custom stacks.

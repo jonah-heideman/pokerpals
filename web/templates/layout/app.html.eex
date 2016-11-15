@@ -9,6 +9,7 @@
 
     <title>Hello Rampant!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/materialize.min.css") %>">
   </head>
 
   <body>
@@ -17,6 +18,9 @@
       <%= if @current_user do %>
       <li>
         <%= @current_user.username %>
+      </li>
+      <li>
+        <%= link "Lobby", to: game_path(@conn, :index) %></li>
       </li>
       <li>
         <%= link "Log out", to: session_path(@conn, :delete, @current_user), method: "delete" %>
@@ -37,6 +41,7 @@
       </main>
 
     </div> <!-- /container -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
