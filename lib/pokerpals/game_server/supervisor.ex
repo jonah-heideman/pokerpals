@@ -12,9 +12,16 @@ defmodule Pokerpals.GameServer.Supervisor do
     supervise(children, strategy: :simple_one_for_one)
   end
 
-  def start_game(game_id) do
+  def init_game(game_id) do
     ## update game record to "started" here??
+    IO.puts "INIT GAME"
     Supervisor.start_child(__MODULE__, [game_id])
+    # case Supervisor.start_child(__MODULE__, [game_id]) do
+    #   {:error, {:already_started, _pid}} ->
+    #     IO.puts "Already started"
+    #   true ->
+    #     IO.puts "Start game"
+    # end
   end
 
   def current_games do

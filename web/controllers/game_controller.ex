@@ -69,7 +69,7 @@ defmodule Pokerpals.GameController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id}, _) do
     game = Repo.get!(Game, id)
 
     # Here we use delete! (with a bang) because we expect

@@ -57,27 +57,31 @@ socket.connect()
 // import * as client_data from "./client_data"
 
 let joinButton = $('#join-button')
+let startButton = $('#start-button')
 let exitLink = $('#exit-link')
 let storage = window.localStorage;
 let call_get = window.localStorage.getItem;
 let gameId = call_get.call(storage, 'game_id')
 let userId = call_get.call(storage, 'user_id')
 let username = call_get.call(storage, 'username')
-let channel = socket.channel(`${gameId}`, {username: `${username}`, user_id: `${userId}`})
+let gameChannel = socket.channel(`game:${gameId}`, {username: `${username}`, user_id: `${userId}`})
 joinButton.on('click', e => {
-  channel.join()
+  gameChannel.join()
     .receive("ok", resp => {
       console.log("Joined successfully", resp)
-      joinButton.prop('disabled', true);
       })
     .receive("error", resp => { console.log("Unable to join", resp) })
-  channel.on('user_joined', payload => {
+  gameChannel.on('user_joined', payload => {
     console.log("JOINED: " + payload.username);
+    joinButton.prop('disabled', true)
+  })
+})
+startButton.on('click', e => {
+  gameChannel.push("start_game", {game_id: `${gameId}`}, socket)
+  gameChannel.on("game_started", payload => {
+    console.log(payload)
   })
 })
 
-exitLink.on('click', e => {
-  channel.leave();
-})
 
 export default socket
