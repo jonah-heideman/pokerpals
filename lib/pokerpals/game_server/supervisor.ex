@@ -14,7 +14,7 @@ defmodule Pokerpals.GameServer.Supervisor do
 
   def init_game(game_id) do
     ## update game record to "started" here??
-    IO.puts "INIT GAME"
+    IO.puts "INIT GAME: #{game_id}"
     Supervisor.start_child(__MODULE__, [game_id])
     # case Supervisor.start_child(__MODULE__, [game_id]) do
     #   {:error, {:already_started, _pid}} ->

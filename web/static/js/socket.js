@@ -77,7 +77,7 @@ joinButton.on('click', e => {
   })
 })
 startButton.on('click', e => {
-  gameChannel.push("start_game", {game_id: `${gameId}`}, socket)
+  gameChannel.push("start_game", {game_id: `${gameId}`, user_id: `${userId}`}, socket)
   gameChannel.on("game_started", payload => {
     console.log(payload)
   })

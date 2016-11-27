@@ -26,7 +26,24 @@ defmodule Pokerpals.GameWorker do
   end
 
   def join(id, user_id, pid), do: try_call(id, {:join, user_id, pid})
-  #def begin_game(id, user_id, pid), do:
+  def begin_game(id, user_id, pid), do: try_call(id, {:begin_game, user_id, pid})
+
+  def handle_call({:begin_game, user_id, pid}, _from, %{:ready => ready, :id => id} = game) when ready == false do
+    IO.puts "game id:#{id} not ready, cannot begin"
+    {:reply, {:ok, self}, game}
+  end
+
+  def handle_call({:begin_game, user_id, pid}, _from, %{:ready => ready, :id => id} = game) do
+    update = case update_game_started(game) do
+      {:ok, record} ->
+        IO.puts "game id:#{id} has begun!"
+        record
+      {:error, game} ->
+        IO.puts "could not begin game id:#{id}"
+        game
+    end
+    {:reply, {:ok, self}, update}
+  end
 
   def handle_call({:join, user_id, pid}, _from, game) do
     # cond do
@@ -47,15 +64,8 @@ defmodule Pokerpals.GameWorker do
     # end
   end
 
-  defp update_game_record(%{:id => game_id}) do
-    game = Repo.get(Game, game_id)
-    changeset = Ecto.Changeset.change game, active: true
-    case Repo.update changeset do
-      {:ok, game} ->
-        IO.puts "Game id:#{game_id} started"
-      {:error, changeset} ->
-        IO.puts "Error starting game id:#{game_id}"
-    end
+  defp update_game_started(game) do
+    Game.start_game(game)
   end
 
   defp set_ready_state(%{:player_ids => player_ids} = game) when length(player_ids) < @min_players, do: game
@@ -77,7 +87,7 @@ defmodule Pokerpals.GameWorker do
     %{game | player_ids: player_ids ++ [user_id]}
   end
 
-  defp ref(id), do: {:global, {:game_id, id}}
+  def ref(id), do: {:global, {:game_id, id}}
 
   defp try_call(id, message) do
     case GenServer.whereis(ref(id)) do

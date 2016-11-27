@@ -20,6 +20,7 @@ defmodule Pokerpals.GameChannel do
     case join do
       {:ok, _pid} ->
         socket = assign(socket, :game_id, game_id)
+        socket = assign(socket, :game_pid, game_pid)
       {:error, reason} ->
         IO.puts "Error joining game: #{reason}"
     end
@@ -32,9 +33,15 @@ defmodule Pokerpals.GameChannel do
     {:noreply, socket}
   end
 
-  def handle_in("start_game", %{"game_id" => game_id}, socket) do
-    broadcast! socket, "game_started", %{"game_id" => game_id}
-    {:reply, {:ok, %{game_id: game_id}}, socket}
+  def handle_in("start_game", %{"game_id" => game_id, "user_id" => user_id}, %{:assigns => %{:game_pid => game_pid}} = socket) do
+    resp = GameWorker.begin_game(game_id, user_id, game_pid)
+    case resp do
+      {:ok, _} ->
+        broadcast! socket, "game_started", %{"game_id" => game_id}
+      {:error, error} ->
+        IO.puts "Error in start_game: #{error}"
+    end
+    {:noreply, socket}
   end
 
 end
